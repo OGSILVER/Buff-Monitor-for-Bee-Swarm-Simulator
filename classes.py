@@ -15,6 +15,8 @@ BUFF_DURATIONS = {
 
 }
 
+PRECISION_FULL_COLOR = 109
+
 from mss import mss
 import mss.tools
 from numpy import asarray
@@ -22,6 +24,8 @@ from PIL import Image
 from crop_icons import ICON_SIZE
 import pytesseract
 import re
+import time
+import math
 
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -49,12 +53,25 @@ class Buff:
             self.is_active = True
     
 
-    def get_stack(image):
+    def get_stack(self, image):
         config = r"--oem 3 --psm 8 -c tessedit_char_whitelist=0123456789"
         image = image.resize((ICON_SIZE*2, ICON_SIZE*2),Image.BICUBIC) 
         image = image.crop((0, ICON_SIZE, ICON_SIZE*2, ICON_SIZE*2))
         text = pytesseract.image_to_string(image, config=config)
-        image.show()
         match = re.search(r"\d+", text)
         
-        stack =  int(match.group()) if match else None
+        self.stack = int(match.group()) if match else None
+
+    def check_status(self, image):
+        if self.name == "PRECISION":
+            color_full = PRECISION_FULL_COLOR
+
+            if image[30][1] != color_full:
+                ##make a warning sound here
+                time.sleep(math.floor(self.duration*0.2))
+                if image[30][1] != color_full:
+                    self.is_active = False
+            
+        
+    
+        

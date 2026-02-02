@@ -7,6 +7,7 @@ import pytesseract
 import re
 from classes import Buff
 
+
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
@@ -14,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 DIFF_POOL = ThreadPoolExecutor(max_workers=8)
 OCR_POOL  = ThreadPoolExecutor(max_workers=4)
+STATUS_POOL = ThreadPoolExecutor(max_workers=4)
 
 def capture_strip():
     
@@ -49,12 +51,17 @@ def crop_icons(output):
             return_arr_numpy.append(icon_arr)                             #appending to return array 
             return_arr_img.append(icon_l)                                 #appending to return array       
     return return_arr_numpy, return_arr_img
+
+
+
+
+
         
 
 
 if __name__ == "__main__":
     looking_for = ["BLUE_BOOST"]
-    buff_arr= []
+    buff_arr = []
     active_buff_pool = []
 
     for buff_name in looking_for:
@@ -62,6 +69,7 @@ if __name__ == "__main__":
 
     while True:
         numpy_arr, img_arr = crop_icons(capture_strip())
+
         for buff in buff_arr:
             buff.find_lowest_diff(numpy_arr)
 
@@ -74,7 +82,8 @@ if __name__ == "__main__":
         for buff in active_buff_pool:
             buff.get_stack(img_arr[buff.icon_index])
         
-
+        for buff in active_buff_pool:
+            buff.check_status(numpy_arr[buff.icon_index])
 
         wait = input("Press Enter to continue...")
         
