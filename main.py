@@ -5,9 +5,15 @@ from PIL import Image
 from crop_icons import ICON_SIZE
 import pytesseract
 import re
+from classes import Buff
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
+
+from concurrent.futures import ThreadPoolExecutor
+
+DIFF_POOL = ThreadPoolExecutor(max_workers=8)
+OCR_POOL  = ThreadPoolExecutor(max_workers=4)
 
 def capture_strip():
     
@@ -34,8 +40,8 @@ def crop_icons(output):
             bottom = ICON_SIZE
 
             icon_l = img.crop((left, top, right, bottom))             #cropping the icon
-            ##icon_l = icon.convert("L")                                #converting to grayscale
-            icon_l = icon_l.resize((ICON_SIZE*2, ICON_SIZE*2),Image.BICUBIC)                          
+            icon_l = icon_l.convert("L")                                #converting to grayscale
+                        
             ##icon_l = icon_l.point(lambda x: 0 if x < 140 else 255, "1")
 
             icon_arr = asarray(icon_l)                              #converting to numpy array
@@ -45,43 +51,34 @@ def crop_icons(output):
     return return_arr_numpy, return_arr_img
         
 
-def difference(icon1, icon2):
-    diff = 0
-    for i in range(ICON_SIZE):
-        for j in range(ICON_SIZE):
-            diff += abs(int(icon1[i][j]) - int(icon2[i][j]))
-    return diff
-
-
-
-def find_lowest_diff(target_icon, icons_arr):
-    lowest_diff = float('inf')
-    for i in range(2):
-        curent_diff = difference(target_icon, icons_arr[i])
-        if curent_diff < lowest_diff:
-            lowest_diff = curent_diff
-    return lowest_diff
-
-
-
-def get_stack(image):
-    config = r"--oem 3 --psm 8 -c tessedit_char_whitelist=0123456789"
-    image = image.crop((0, ICON_SIZE, ICON_SIZE*2, ICON_SIZE*2))
-    text = pytesseract.image_to_string(image, config=config)
-    image.show()
-    match = re.search(r"\d+", text)
-    return int(match.group()) if match else None
-
-
-
 
 if __name__ == "__main__":
-    ##img_strip = capture_strip() 
-    img_strip = "sct-58x0_760x38.png"
-    icons_numpy, icons_img = crop_icons(img_strip)
+    looking_for = ["BLUE_BOOST"]
+    buff_arr= []
+    active_buff_pool = []
+
+    for buff_name in looking_for:
+            buff_arr.append(Buff(buff_name))
+
+    while True:
+        numpy_arr, img_arr = crop_icons(capture_strip())
+        for buff in buff_arr:
+            buff.find_lowest_diff(numpy_arr)
+
+
+        for buff in buff_arr:
+            if buff.is_active:
+                active_buff_pool.append(buff)
+
+                
+        for buff in active_buff_pool:
+            buff.get_stack(img_arr[buff.icon_index])
+        
+
+
+        wait = input("Press Enter to continue...")
+        
     
-    stack_num = get_stack(icons_img[7])
-    print(stack_num)
 
 
     
