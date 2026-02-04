@@ -23,7 +23,7 @@ def crop_icons(output):   #and save each icon as image
     with Image.open(output) as img:
         return_arr = []
         for i in range(20):
-            if i > 2:
+            if i > 0:
                 left = i * ICON_SIZE
                 top = 0
                 right = left + ICON_SIZE
