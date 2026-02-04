@@ -1,6 +1,5 @@
 from mss import mss
 import mss.tools
-from numpy import asarray
 
 from PIL import Image
 
@@ -21,7 +20,6 @@ def capture_strip():
 
 def crop_icons(output):   #and save each icon as image
     with Image.open(output) as img:
-        return_arr = []
         for i in range(20):
             if i > 0:
                 left = i * ICON_SIZE

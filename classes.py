@@ -53,7 +53,7 @@ class Buff:
 
                 
   
-        if lowest_diff < 3000:
+        if lowest_diff < 19000:
             self.is_active = True
             self.icon_index = lowest_diff_index
     
@@ -81,7 +81,7 @@ class Buff:
 
                 if image[30][1] != color_full:
                         ##make a warning sound here and status is running out
-                    time.sleep(math.floor(self.duration*0.2))
+                    time.sleep(math.floor(self.duration*0.25))
                     if image[30][1] != color_full:
                         self.is_active = False
                         self.is_being_checked = False
