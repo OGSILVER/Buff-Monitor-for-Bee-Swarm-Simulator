@@ -4,9 +4,15 @@ A Python-based screen reader application designed to make digital content more a
 
 ## Features
 
-- Text-to-speech functionality
-- Screen content analysis
-- Keyboard navigation support
-- Customizable voice settings
+- Buff type detection
+- Buff stack detection 
+- Precision buff monitoring 
 
-## Installation
+## Used Technologies
+
+- Screen capture with mss
+- Image recognition through comparison as numpy arrays
+- Optical Character Recognition with Tesseract-OCR and Pytesseract library
+- Multithreading for buff detection and buff stack detection 
+- Usage of daemon threads for certain buff monitoring independently of main thread
+
