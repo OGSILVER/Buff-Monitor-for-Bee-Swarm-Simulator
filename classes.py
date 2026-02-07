@@ -35,12 +35,18 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 from helper_def import  difference
 
 class Buff:
-    spaces = list(range(1,21))
-    def __init__(self, name, duration= None, icon_index=None, stack=0, is_active=False, is_being_checked=False, is_max_stack = False,_bg_thread = None):
+    def __init__(self, name):
         self.name = name
         self.duration = BUFF_DURATIONS[name]
-        
-    
+
+        # internal state (set/updated by checks later)
+        self.icon_index = None
+        self.stack = 0
+        self.is_active = False
+        self.is_being_checked = False
+        self.is_max_stack = False
+        self._bg_thread = None
+        self.diff = float('inf')
 
     def find_lowest_diff(self, icons_arr):
         lowest_diff = float('inf')
@@ -53,10 +59,15 @@ class Buff:
 
                 
   
-        if lowest_diff < 19000:
+        if lowest_diff < 70000:
             self.is_active = True
             self.icon_index = lowest_diff_index
-    
+        else:
+            self.is_active = False
+            self.icon_index = None
+
+        
+        return lowest_diff, self.name
 
     def get_stack(self, image):
         config = r"--oem 3 --psm 8 -c tessedit_char_whitelist=0123456789"
