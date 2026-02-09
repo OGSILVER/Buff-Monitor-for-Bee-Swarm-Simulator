@@ -46,28 +46,17 @@ class Buff:
         self.is_being_checked = False
         self.is_max_stack = False
         self._bg_thread = None
-        self.diff = float('inf')
 
     def find_lowest_diff(self, icons_arr):
         lowest_diff = float('inf')
-        lowest_diff_index = None
-        for i,image in enumerate(icons_arr):
+        for image in icons_arr:
             curent_diff = difference(self.name+".png", image)
             if curent_diff < lowest_diff:
                 lowest_diff = curent_diff
-                lowest_diff_index = i
 
-                
-  
-        if lowest_diff < 70000:
-            self.is_active = True
-            self.icon_index = lowest_diff_index
-        else:
-            self.is_active = False
-            self.icon_index = None
 
-        
         return lowest_diff, self.name
+
 
     def get_stack(self, image):
         config = r"--oem 3 --psm 8 -c tessedit_char_whitelist=0123456789"
@@ -76,7 +65,7 @@ class Buff:
         text = pytesseract.image_to_string(image, config=config)
         match = re.search(r"\d+", text)
         
-        self.stack = int(match.group()) if match else None
+        return int(match.group()) if match else None, self.name
 
     def precision_check(self, image):
 

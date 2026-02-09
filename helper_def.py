@@ -46,6 +46,15 @@ def crop_icons(output):
 
 
 def difference(icon1, icon2):
+    
+    
+    
+    
+    
+    
+    
+    
+    
     diff = 0
     icon1 = asarray(Image.open("BOOSTS/"+icon1))
     for i in range(ICON_SIZE):

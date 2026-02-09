@@ -8,6 +8,7 @@ ICON_SIZE = 38
 
 def capture_strip():
     with mss.mss() as sct:
+        sct.compression_level = 0
     
         monitor = {"top": 58, "left": 0, "width": 760, "height": ICON_SIZE}
         output = "sct-{top}x{left}_{width}x{height}.png".format(**monitor)
@@ -20,7 +21,7 @@ def capture_strip():
 
 def crop_icons(output):   #and save each icon as image
     with Image.open(output) as img:
-        for i in range(20):
+        for i in range(5):
             if i > 0:
                 left = i * ICON_SIZE
                 top = 0
@@ -28,8 +29,9 @@ def crop_icons(output):   #and save each icon as image
                 bottom = ICON_SIZE
     
                 icon = img.crop((left, top, right, bottom))             #cropping the icon
-                icon_l = icon.convert("L")
-                icon_l.save(f"block{i}.png")                              #converting to grayscale
+                icon = icon.resize((ICON_SIZE*4, ICON_SIZE*4))              #resizing the icon
+
+                icon.save(f"block{i}.png")                              #converting to grayscale
 
 
                  
